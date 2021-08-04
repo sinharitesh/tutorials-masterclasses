@@ -1,2 +1,6 @@
-# tutorials-masterclasses
-Some of my tutorials and masterclasses
+## tutorials-masterclasses
+
+My tutorials and handouts are organized in various subfolders:
+
+- Pytorch tutorial
+- Productionizing ml models on AWS platform
