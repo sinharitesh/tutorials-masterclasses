@@ -1,0 +1,48 @@
+import json
+import sklearn
+import boto3
+import os
+import json
+import pickle
+import logging
+import pandas as pd
+import time
+
+s3 = boto3.client('s3')
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+MODEL_BUCKET=os.environ.get('MODEL_BUCKET')
+logger.info(f'Model Bucket is {MODEL_BUCKET}')
+
+# get bucket prefix from ENV variable
+MODEL_KEY=os.environ.get('MODEL_KEY')
+logger.info(f'Model Prefix is {MODEL_KEY}')
+temp_file_path = '/tmp/' + MODEL_KEY
+
+# ** Model Init **
+s3.download_file(MODEL_BUCKET, MODEL_KEY, temp_file_path)
+print(temp_file_path)
+
+with open(temp_file_path, 'rb') as f:
+    model = pickle.load(f)
+    strclasses = str(model.classes_)
+
+def lambda_handler(event, context):
+    start_time = time.time()
+    input_ = event
+    #print(input_)
+    #df_input = pd.DataFrame([input_])
+    y_pred=model.predict(pd.DataFrame([input_]))
+    message = f'{MODEL_BUCKET}-{MODEL_KEY}-{y_pred}'
+    end_time = time.time()
+    time_taken = end_time - start_time
+    message = f'time taken is: {time_taken}'
+    # TODO implement
+    return {
+        'statusCode': 200,
+        'body': json.dumps(message),
+        'time': time_taken,
+        'predict':f'class_{y_pred}'
+    }

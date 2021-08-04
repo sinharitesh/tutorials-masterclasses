@@ -1,0 +1,1 @@
+curl -v -X POST "https://j7gcbukom0.execute-api.us-east-2.amazonaws.com/unittest/predict/" -H "content-type: application/json" -d "{ \"alcohol\": \"12\", \"malic_acid\": \"15\" }"
